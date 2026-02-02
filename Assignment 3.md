@@ -1,25 +1,25 @@
 # PL/SQL
 
 ## 1. Account Debit with Minimum Balance Check
-**Question:** Write a PL/SQL code block to perform a debit transaction of 2,000 from a given account. The block should check if the account balance after the debit remains above a minimum balance of 3,000. If the condition is met, update the account balance in the `ACCT_MSTR20231056` table.
+**Question:** Write a PL/SQL code block to perform a debit transaction of 2,000 from a given account. The block should check if the account balance after the debit remains above a minimum balance of 3,000. If the condition is met, update the account balance in the `ACCT_MSTR20231052` table.
 
 ```sql
-DROP TABLE ACCT_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE ACCT_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE ACCT_MSTR20231056 (
+CREATE TABLE ACCT_MSTR20231052 (
     ACCOUNT_NO VARCHAR(7),
     ACCOUNT_BAL NUMBER(11,2)
 );
 
-DESC ACCT_MSTR20231056;
+DESC ACCT_MSTR20231052;
 
-INSERT INTO ACCT_MSTR20231056 VALUES ('AC00001', 3000);
-INSERT INTO ACCT_MSTR20231056 VALUES ('AC00002', 7000);
-INSERT INTO ACCT_MSTR20231056 VALUES ('AC00003', 10000);
+INSERT INTO ACCT_MSTR20231052 VALUES ('AC00001', 3000);
+INSERT INTO ACCT_MSTR20231052 VALUES ('AC00002', 7000);
+INSERT INTO ACCT_MSTR20231052 VALUES ('AC00003', 10000);
 
-SELECT * FROM ACCT_MSTR20231056;
+SELECT * FROM ACCT_MSTR20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
 	ACCT_BALANCE NUMBER(11,2);
@@ -30,38 +30,38 @@ BEGIN
 	ACCT_NO:='&ACCT_NO';
 
 	SELECT ACCOUNT_BAL INTO ACCT_BALANCE
-	FROM ACCT_MSTR20231056
+	FROM ACCT_MSTR20231052
 	WHERE ACCOUNT_NO = ACCT_NO;
 
 	IF (ACCT_BALANCE - DEBIT_AMT) >= MIN_BAL THEN
-		UPDATE ACCT_MSTR20231056 SET ACCOUNT_BAL = ACCOUNT_BAL - DEBIT_AMT
+		UPDATE ACCT_MSTR20231052 SET ACCOUNT_BAL = ACCOUNT_BAL - DEBIT_AMT
 		WHERE ACCOUNT_NO = ACCT_NO;
 	END IF;
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM ACCT_MSTR20231056;
+SELECT * FROM ACCT_MSTR20231052;
 ```
 
 ## 2. Circle Area Calculation using WHILE Loop (Fixed Range)
-**Question:** Write a PL/SQL code block to calculate the area of circles for radii varying from 3 to 7 using a `WHILE` loop. Store each radius and its corresponding calculated area in the table `AREAS20231056`.
+**Question:** Write a PL/SQL code block to calculate the area of circles for radii varying from 3 to 7 using a `WHILE` loop. Store each radius and its corresponding calculated area in the table `AREAS20231052`.
 
 ```sql
-DROP TABLE AREAS20231056 CASCADE CONSTRAINTS;
+DROP TABLE AREAS20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE AREAS20231056 
+CREATE TABLE AREAS20231052 
 (
     RADIUS NUMBER(2),
     AREA NUMBER(11,2)
 );
 
-DESC AREAS20231056;
+DESC AREAS20231052;
 
-SELECT * FROM AREAS20231056;
+SELECT * FROM AREAS20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
 	PI NUMBER(4,2):=3.14;
@@ -72,24 +72,24 @@ BEGIN
 	WHILE RADIUS<=7
 	LOOP
 		AREA:=PI*POWER(RADIUS,2);
-		INSERT INTO AREAS20231056 VALUES (RADIUS, AREA);
+		INSERT INTO AREAS20231052 VALUES (RADIUS, AREA);
 		RADIUS:=RADIUS+1;
 	END LOOP;
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM AREAS20231056;
+SELECT * FROM AREAS20231052;
 ```
 
 ## 3. Transaction Control with SAVEPOINT and ROLLBACK
 **Question:** Demonstrate transaction control in PL/SQL. Write a block that performs a bill payment (debit) and a deposit. Use a `SAVEPOINT` before the deposit so that if the total balance across accounts exceeds 200,000 after the deposit, the transaction can be rolled back to the state before the deposit occurred.
 
 ```sql
-DROP TABLE TRANS_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE TRANS_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE TRANS_MSTR20231056
+CREATE TABLE TRANS_MSTR20231052
 (
 	TRANS_NO VARCHAR(4), 
 	ACCT_NO VARCHAR(4), 
@@ -101,44 +101,44 @@ CREATE TABLE TRANS_MSTR20231056
 	BALANCE NUMBER(14,2)
 );
 
-DESC TRANS_MSTR20231056;
+DESC TRANS_MSTR20231052;
 
-DROP TABLE ACCT_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE ACCT_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE ACCT_MSTR20231056 
+CREATE TABLE ACCT_MSTR20231052 
 (
     ACCT_NO VARCHAR(4),
     CURBAL NUMBER(14,2)
 );
 
-DESC ACCT_MSTR20231056;
+DESC ACCT_MSTR20231052;
 
-INSERT INTO ACCT_MSTR20231056 VALUES ('CA10', 71000);
+INSERT INTO ACCT_MSTR20231052 VALUES ('CA10', 71000);
 
-SELECT * FROM ACCT_MSTR20231056;
+SELECT * FROM ACCT_MSTR20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
 	MBAL NUMBER(8,2);
 BEGIN
-	INSERT INTO TRANS_MSTR20231056 VALUES ('T100', 'CA10', '04-JUL-2004', 'C', 'Telephone Bill', 'W', 1000, 31000);
+	INSERT INTO TRANS_MSTR20231052 VALUES ('T100', 'CA10', '04-JUL-2004', 'C', 'Telephone Bill', 'W', 1000, 31000);
 	
-	UPDATE ACCT_MSTR20231056 
+	UPDATE ACCT_MSTR20231052 
 	SET CURBAL = CURBAL - 1000 
 	WHERE ACCT_NO = 'CA10';
 
 	SAVEPOINT NO_UPDATE;
 	
-	INSERT INTO TRANS_MSTR20231056 VALUES ('T101', 'CA10', '04-JUL-2004', 'C', 'Deposit', 'D', 140000, 171000);
+	INSERT INTO TRANS_MSTR20231052 VALUES ('T101', 'CA10', '04-JUL-2004', 'C', 'Deposit', 'D', 140000, 171000);
 
-	UPDATE ACCT_MSTR20231056 
+	UPDATE ACCT_MSTR20231052 
 	SET CURBAL = CURBAL + 140000 
 	WHERE ACCT_NO = 'CA10';
 
 	SELECT SUM(CURBAL) 
 	INTO MBAL 
-	FROM ACCT_MSTR20231056;
+	FROM ACCT_MSTR20231052;
 
 	IF MBAL > 200000 THEN
 		ROLLBACK TO SAVEPOINT NO_UPDATE;
@@ -148,38 +148,38 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM TRANS_MSTR20231056;
+SELECT * FROM TRANS_MSTR20231052;
 
-SELECT * FROM ACCT_MSTR20231056;
+SELECT * FROM ACCT_MSTR20231052;
 ```
 
 ## 4. Implicit Cursor Attributes (SQL%FOUND and SQL%NOTFOUND)
-**Question:** Write a PL/SQL code block to update an employee's branch location in the `EMP_MSTR20231056` table. Use the implicit cursor attributes `SQL%FOUND` and `SQL%NOTFOUND` to print a success message if the update occurs or an error message if the employee ID does not exist.
+**Question:** Write a PL/SQL code block to update an employee's branch location in the `EMP_MSTR20231052` table. Use the implicit cursor attributes `SQL%FOUND` and `SQL%NOTFOUND` to print a success message if the update occurs or an error message if the employee ID does not exist.
 
 ```sql
-DROP TABLE EMP_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE EMP_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE EMP_MSTR20231056 
+CREATE TABLE EMP_MSTR20231052 
 (
     EMP_NO VARCHAR2(10),
     EMP_NAME VARCHAR2(30),
     BRANCH_NO VARCHAR2(10)
 );
 
-DESC EMP_MSTR20231056;
+DESC EMP_MSTR20231052;
 
-INSERT INTO EMP_MSTR20231056 VALUES ('E1', 'Harry', 'B1');
-INSERT INTO EMP_MSTR20231056 VALUES ('E2', 'Blake', 'B2');
-INSERT INTO EMP_MSTR20231056 VALUES ('E3', 'Jack', 'B3');
+INSERT INTO EMP_MSTR20231052 VALUES ('E1', 'Harry', 'B1');
+INSERT INTO EMP_MSTR20231052 VALUES ('E2', 'Blake', 'B2');
+INSERT INTO EMP_MSTR20231052 VALUES ('E3', 'Jack', 'B3');
 
-SELECT * FROM EMP_MSTR20231056;
+SELECT * FROM EMP_MSTR20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 BEGIN
-    UPDATE EMP_MSTR20231056 SET BRANCH_NO = '&BRANCH_NO' WHERE EMP_NO = '&EMP_NO';
+    UPDATE EMP_MSTR20231052 SET BRANCH_NO = '&BRANCH_NO' WHERE EMP_NO = '&EMP_NO';
     IF SQL%FOUND THEN
         DBMS_OUTPUT.PUT_LINE('EMPLOYEE SUCCESSFULLY TRANSFERRED');
     END IF;
@@ -189,28 +189,28 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM EMP_MSTR20231056;
+SELECT * FROM EMP_MSTR20231052;
 ```
 
 ## 5. Circle Area Calculation (Range)
-**Question:** Write a PL/SQL code block to calculate the area for a value of radius varying from x to y (x & y will be given by the user). Store the radius and the corresponding values of calculated areas in table `AREAS20231056(radius, area)`.
+**Question:** Write a PL/SQL code block to calculate the area for a value of radius varying from x to y (x & y will be given by the user). Store the radius and the corresponding values of calculated areas in table `AREAS20231052(radius, area)`.
 
 ```sql
-DROP TABLE AREAS20231056 CASCADE CONSTRAINTS;
+DROP TABLE AREAS20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE AREAS20231056
+CREATE TABLE AREAS20231052
 (
 	RADIUS NUMBER(5),
 	AREA NUMBER(14,2)
 );
 
-DESC AREAS20231056;
+DESC AREAS20231052;
 
-SELECT * FROM AREAS20231056;
+SELECT * FROM AREAS20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
 	X NUMBER := &X;   
@@ -219,29 +219,29 @@ DECLARE
 BEGIN
 	FOR R IN X .. Y LOOP
 		AREA := 3.14 * R * R; 
-		INSERT INTO AREAS20231056 VALUES (R, AREA);
+		INSERT INTO AREAS20231052 VALUES (R, AREA);
 	END LOOP;
 	COMMIT;
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM AREAS20231056;
+SELECT * FROM AREAS20231052;
 ```
 
 ## 6. Cursor for Record Counting
-**Question:** Print the number of records in the `AREAS20231056` table with the help of a cursor.
+**Question:** Print the number of records in the `AREAS20231052` table with the help of a cursor.
 
 ```sql
-SELECT * FROM AREAS20231056;
+SELECT * FROM AREAS20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     CURSOR C IS
         SELECT RADIUS, AREA
-        FROM AREAS20231056;
+        FROM AREAS20231052;
 
     V_AREA NUMBER (30,2);
     V_RADIUS NUMBER(10);
@@ -259,14 +259,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 7. Invert a Number
 **Question:** Write a PL/SQL code block for inverting a number.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE 
     NUM NUMBER(5);
@@ -282,14 +282,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 8. Sum of Digits
 **Question:** Write a PL/SQL code block to calculate the sum of all digits of a number.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     NUM NUMBER(10);
@@ -305,14 +305,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 9. Maximum of Three Numbers (Function)
 **Question:** Write a PL/SQL function to return the maximum of three numbers.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 CREATE OR REPLACE FUNCTION MAX3 (A NUMBER, B NUMBER, C NUMBER) RETURN NUMBER IS
 BEGIN
@@ -369,26 +369,26 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 10. Factorial Calculation (Function)
 **Question:** Write a PL/SQL function to calculate the factorial of a given number `n` as an argument. Use the function to store `n` and `fact(n)` in a table `Fact_table`.
 
 ```sql
-DROP TABLE FACT_TABLE20231056 CASCADE CONSTRAINTS;
+DROP TABLE FACT_TABLE20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE FACT_TABLE20231056 
+CREATE TABLE FACT_TABLE20231052 
 (
 	N NUMBER,
 	FACT_VALUE NUMBER
 );
 
-DESC FACT_TABLE20231056;
+DESC FACT_TABLE20231052;
 
-SELECT * FROM FACT_TABLE20231056;
+SELECT * FROM FACT_TABLE20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 CREATE OR REPLACE FUNCTION FACTORIAL(N IN NUMBER)
 RETURN NUMBER 
@@ -413,7 +413,7 @@ DECLARE
 BEGIN
     FACT := FACTORIAL(NUM);
 
-    INSERT INTO FACT_TABLE20231056 VALUES (NUM, FACT);
+    INSERT INTO FACT_TABLE20231052 VALUES (NUM, FACT);
     COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('NUMBER = ' || NUM);
@@ -421,16 +421,16 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM FACT_TABLE20231056;
+SELECT * FROM FACT_TABLE20231052;
 ```
 
 ## 11. Prime Number Series
 **Question:** Write a PL/SQL code block to find the prime numbers from a series of numbers.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 CREATE OR REPLACE FUNCTION IS_PRIME(N NUMBER) RETURN NUMBER IS
     S NUMBER:=2;
@@ -475,14 +475,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 12. Fibonacci Series
 **Question:** Write a PL/SQL program to print the first `n` Fibonacci numbers.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     A NUMBER(3):=0;
@@ -510,14 +510,14 @@ BEGIN
 END;
 /
  
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 13. Digit Analysis (Count, Sum, Prime Check)
 **Question:** Write a PL/SQL program that will accept a number and then count the number of digits, sum of digits, and check whether the sum is prime or not.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     NUM NUMBER := &NUM;   
@@ -556,14 +556,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 14. Armstrong Number Check
 **Question:** Write a PL/SQL code that will accept a number and check if the number is Armstrong or not.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     NUM NUMBER;
@@ -597,14 +597,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 15. Proper Case Name Formatting
 **Question:** Write a PL/SQL program that will accept a name and then display it in proper case (e.g., "jim morrison" output "J. Morrison").
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     FULL_NAME VARCHAR2(50) := '&FULL_NAME';  
@@ -624,14 +624,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 16. Product Comparison using DECODE and SIGN
 **Question:** Write a PL/SQL code block to accept two numbers and check whether their product is equal to, greater than, or less than 100 using `DECODE` and `SIGN` functions.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     INPUT1 NUMBER(10);
@@ -649,14 +649,14 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 17. Substring Check using INSTR
 **Question:** Write a PL/SQL code block to accept two strings and check if either string is a substring of the other.
 
 ```sql
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 DECLARE
     STR1 VARCHAR2(30);
@@ -677,31 +677,31 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 ```
 
 ## 18. Initial Payment Insertion for New Accounts
-**Question:** Write a PL/SQL block of code that inserts a record representing the opening balance entry in the `TRANS_MSTR20231056` table each time an account is opened. The insertion should only occur if the `ACCT_NO` is not already present in the `TRANS_MSTR20231056` table (indicating no initial deposit has been made). If the Account Type (`TYPE`) is 'SB', the initial deposit amount should be 500; otherwise, it should be 2000. Use a function to check for the existence of the account in the transaction table.
+**Question:** Write a PL/SQL block of code that inserts a record representing the opening balance entry in the `TRANS_MSTR20231052` table each time an account is opened. The insertion should only occur if the `ACCT_NO` is not already present in the `TRANS_MSTR20231052` table (indicating no initial deposit has been made). If the Account Type (`TYPE`) is 'SB', the initial deposit amount should be 500; otherwise, it should be 2000. Use a function to check for the existence of the account in the transaction table.
 
 ```sql
-DROP TABLE ACCT_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE ACCT_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE ACCT_MSTR20231056
+CREATE TABLE ACCT_MSTR20231052
 (
     ACCT_NO VARCHAR2(5),
     TYPE VARCHAR2(5)
 );
 
-DESC ACCT_MSTR20231056;
+DESC ACCT_MSTR20231052;
 
-INSERT INTO ACCT_MSTR20231056 VALUES ('A001', 'SB');
-INSERT INTO ACCT_MSTR20231056 VALUES ('A002', 'CA');
+INSERT INTO ACCT_MSTR20231052 VALUES ('A001', 'SB');
+INSERT INTO ACCT_MSTR20231052 VALUES ('A002', 'CA');
 
-SELECT * FROM ACCT_MSTR20231056;
+SELECT * FROM ACCT_MSTR20231052;
 
-DROP TABLE TRANS_MSTR20231056 CASCADE CONSTRAINTS;
+DROP TABLE TRANS_MSTR20231052 CASCADE CONSTRAINTS;
 
-CREATE TABLE TRANS_MSTR20231056
+CREATE TABLE TRANS_MSTR20231052
 (
 	TRANS_NO VARCHAR2(5), 
 	ACCT_NO VARCHAR2(5), 
@@ -713,20 +713,20 @@ CREATE TABLE TRANS_MSTR20231056
 	BALANCE NUMBER(14,2)
 );
 
-DESC TRANS_MSTR20231056;
+DESC TRANS_MSTR20231052;
 
-INSERT INTO TRANS_MSTR20231056 VALUES ('T100', 'A099', SYSDATE, 'C', 'OPENING', 'D', 0, 0);
+INSERT INTO TRANS_MSTR20231052 VALUES ('T100', 'A099', SYSDATE, 'C', 'OPENING', 'D', 0, 0);
 
-SELECT * FROM TRANS_MSTR20231056;
+SELECT * FROM TRANS_MSTR20231052;
 
-EDIT PLSQL20231056;
+EDIT PLSQL20231052;
 
 CREATE OR REPLACE FUNCTION F_CHKACCTNO(VACCT_NO IN VARCHAR2) RETURN NUMBER IS
     DUMMYACCTNO VARCHAR2(10);
 BEGIN
     SELECT DISTINCT ACCT_NO 
     INTO DUMMYACCTNO 
-    FROM TRANS_MSTR20231056 
+    FROM TRANS_MSTR20231052 
     WHERE ACCT_NO = VACCT_NO;
     
     RETURN 1;
@@ -738,10 +738,10 @@ END;
 DECLARE
 	CURSOR C_ACCTS IS 
         SELECT ACCT_NO, TYPE 
-        FROM ACCT_MSTR20231056;
+        FROM ACCT_MSTR20231052;
 
-	MACCT_NO ACCT_MSTR20231056.ACCT_NO%TYPE;
-	MTYPE ACCT_MSTR20231056.TYPE%TYPE;
+	MACCT_NO ACCT_MSTR20231052.ACCT_NO%TYPE;
+	MTYPE ACCT_MSTR20231052.TYPE%TYPE;
 	EXISTS_FLAG NUMBER(1);
     V_NEXT_TRANS_NO VARCHAR2(10);
 BEGIN
@@ -755,11 +755,11 @@ BEGIN
         THEN
             SELECT 'T'||TO_CHAR(MAX(TO_NUMBER(SUBSTR(TRANS_NO, 2))) + 1)
             INTO V_NEXT_TRANS_NO
-            FROM TRANS_MSTR20231056;
+            FROM TRANS_MSTR20231052;
 
 			IF MTYPE = 'SB'
             THEN
-				INSERT INTO TRANS_MSTR20231056 VALUES
+				INSERT INTO TRANS_MSTR20231052 VALUES
                 (
                     V_NEXT_TRANS_NO, 
                     MACCT_NO, 
@@ -771,7 +771,7 @@ BEGIN
                     500
                 );
 			ELSE
-				INSERT INTO TRANS_MSTR20231056 VALUES
+				INSERT INTO TRANS_MSTR20231052 VALUES
                 (
                     V_NEXT_TRANS_NO, 
                     MACCT_NO, 
@@ -790,7 +790,7 @@ BEGIN
 END;
 /
 
-@PLSQL20231056;
+@PLSQL20231052;
 
-SELECT * FROM TRANS_MSTR20231056;
+SELECT * FROM TRANS_MSTR20231052;
 ```
