@@ -1,4 +1,4 @@
-# Query
+# SQL
 
 ### 1. Date of Birth and address of John B Smith
 
